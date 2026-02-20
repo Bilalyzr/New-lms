@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Mail, Lock, User, Shield } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 import './Auth.css';
 
 export default function Register() {
@@ -11,16 +12,30 @@ export default function Register() {
         role: 'student' // users.role ENUM('student','instructor','admin') based on PRD
     });
 
+    const [errorMsg, setErrorMsg] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+
     const navigate = useNavigate();
+    const { registerServer } = useAuth(); // fetch API context
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleRegister = (e) => {
+    const handleRegister = async (e) => {
         e.preventDefault();
-        // Simulate successful registration redirect to login
-        navigate('/login');
+        setErrorMsg('');
+        setIsLoading(true);
+
+        // API Call
+        const response = await registerServer(formData.fullName, formData.email, formData.password, formData.role);
+
+        if (response.success) {
+            navigate('/login');
+        } else {
+            setErrorMsg(response.message);
+            setIsLoading(false);
+        }
     };
 
     return (
@@ -31,6 +46,12 @@ export default function Register() {
                     <h1 className="auth-title">Create an Account</h1>
                     <p className="text-muted">Join the premium learning network.</p>
                 </div>
+
+                {errorMsg && (
+                    <div className="bg-red-50 text-red-600 p-3 rounded-lg mb-4 text-sm border border-red-200">
+                        {errorMsg}
+                    </div>
+                )}
 
                 <form className="auth-form" onSubmit={handleRegister}>
 

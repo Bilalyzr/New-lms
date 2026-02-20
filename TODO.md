@@ -34,3 +34,20 @@
 - [x] Implement System Notifications Dropdown/Page
 - [x] Settings Page (Tabs for profile edit)
 - [x] Search Integration (Connecting listing page search bar logic)
+
+## Phase 7: Live Backend Database (Started 🚀)
+- [x] Write PostgreSQL Schema (`database.sql`)
+- [x] Connect `pg` pool to Express API
+- [x] Create User Auth Routes (Register, Login, JWT tokens)
+- [x] Create Courses Routes (Fetch, Create, Update)
+- [ ] Wire up React Frontend to Axios / Live API
+
+## Phase 8: Production Build (✅ Completed)
+- [x] Test frontend to backend full workflow locally
+- [x] Build React production files via `npm run build`
+
+## Phase 9: AWS SaaS Architecture
+- [ ] AWS RDS Database deployment
+- [ ] AWS EC2 Node.js backend setup via PM2 + Nginx
+- [ ] AWS S3 + CloudFront static frontend deployment
+- [ ] Domain integration & ACM HTTPS Setup

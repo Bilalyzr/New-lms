@@ -1,11 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 import './CourseListing.css';
 import { Search, Filter, Star, Clock } from 'lucide-react';
 
 export default function CourseListing() {
     const [activeCategory, setActiveCategory] = useState('All');
     const [activePage, setActivePage] = useState(1);
+    const [courses, setCourses] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     const handlePageChange = (page) => {
         setActivePage(page);
@@ -14,18 +17,40 @@ export default function CourseListing() {
 
     const categories = ['All', 'Development', 'Business', 'Design', 'Marketing', 'IT & Software'];
 
-    const courses = [
-        { id: 1, title: 'Complete Web Developer Bootcamp', category: 'Development', rating: 4.8, price: 89.99, hours: 45, instructor: 'Dr. Angela Yu' },
-        { id: 2, title: 'Machine Learning A-Z', category: 'Development', rating: 4.7, price: 99.99, hours: 42, instructor: 'Kirill Eremenko' },
-        { id: 3, title: 'The Complete Digital Marketing Course', category: 'Marketing', rating: 4.6, price: 79.99, hours: 22, instructor: 'Rob Percival' },
-        { id: 4, title: 'UI/UX Design Masterclass', category: 'Design', rating: 4.9, price: 85.00, hours: 15, instructor: 'Jane Smith' },
-        { id: 5, title: 'AWS Certified Solutions Architect', category: 'IT & Software', rating: 4.7, price: 110.00, hours: 30, instructor: 'Stephane Maarek' },
-        { id: 6, title: 'The Complete Advanced Business Prep', category: 'Business', rating: 4.5, price: 65.00, hours: 12, instructor: 'Tom Harris' },
-    ];
+    useEffect(() => {
+        const fetchCourses = async () => {
+            try {
+                const res = await axios.get('http://localhost:5000/api/courses');
+                // Use backend data, fallback to mock data if empty
+                if (res.data.length > 0) {
+                    setCourses(res.data);
+                } else {
+                    setCourses([
+                        { id: 1, title: 'Complete Web Developer Bootcamp', category: 'Development', rating: 4.8, price: 89.99, hours: 45, instructor: 'Dr. Angela Yu' },
+                        { id: 2, title: 'Machine Learning A-Z', category: 'Development', rating: 4.7, price: 99.99, hours: 42, instructor: 'Kirill Eremenko' },
+                        { id: 3, title: 'The Complete Digital Marketing Course', category: 'Marketing', rating: 4.6, price: 79.99, hours: 22, instructor: 'Rob Percival' },
+                        { id: 4, title: 'UI/UX Design Masterclass', category: 'Design', rating: 4.9, price: 85.00, hours: 15, instructor: 'Jane Smith' },
+                        { id: 5, title: 'AWS Certified Solutions Architect', category: 'IT & Software', rating: 4.7, price: 110.00, hours: 30, instructor: 'Stephane Maarek' },
+                        { id: 6, title: 'The Complete Advanced Business Prep', category: 'Business', rating: 4.5, price: 65.00, hours: 12, instructor: 'Tom Harris' },
+                    ]);
+                }
+                setLoading(false);
+            } catch (error) {
+                console.error("Error fetching courses:", error);
+                setLoading(false);
+            }
+        };
+
+        fetchCourses();
+    }, []);
 
     const filteredCourses = activeCategory === 'All'
         ? courses
         : courses.filter(c => c.category === activeCategory);
+
+    if (loading) {
+        return <div className="container p-10 text-center"><div className="spinner-border text-primary"></div> Loading courses...</div>;
+    }
 
     return (
         <div className="course-listing-page container">

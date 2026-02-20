@@ -6,26 +6,37 @@ import './Auth.css';
 
 export default function Login() {
     const [formData, setFormData] = useState({ email: '', password: '', role: 'student' });
+    const [errorMsg, setErrorMsg] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+
     const navigate = useNavigate();
-    const { login } = useAuth();
+    const { loginServer, login } = useAuth(); // getting both
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleLogin = (e) => {
+    const handleLogin = async (e) => {
         e.preventDefault();
+        setErrorMsg('');
+        setIsLoading(true);
 
-        // Context API Simulation: Set role in global state
-        login(formData.role);
+        // Call the real Express API
+        const response = await loginServer(formData.email, formData.password, formData.role);
 
-        // Routing logic based on defined page view system (Role)
-        if (formData.role === 'admin') {
-            navigate('/admin');
-        } else if (formData.role === 'instructor') {
-            navigate('/instructor');
+        if (response.success) {
+            // Routing logic based on defined page view system (Role)
+            if (formData.role === 'admin') {
+                navigate('/admin');
+            } else if (formData.role === 'instructor') {
+                navigate('/instructor');
+            } else {
+                navigate('/dashboard');
+            }
         } else {
-            navigate('/dashboard');
+            // API rejected the login (e.g. wrong password/role)
+            setErrorMsg(response.message);
+            setIsLoading(false);
         }
     };
 
@@ -38,9 +49,15 @@ export default function Login() {
                     <p className="text-muted">Log in to your Hexoria Academy account to continue learning.</p>
                 </div>
 
+                {errorMsg && (
+                    <div className="bg-red-50 text-red-600 p-3 rounded-lg mb-4 text-sm border border-red-200">
+                        {errorMsg}
+                    </div>
+                )}
+
                 <form className="auth-form" onSubmit={handleLogin}>
                     <div className="form-group">
-                        <label>Simulate Login Role</label>
+                        <label>Account Role</label>
                         <div className="role-selector mb-4">
                             <label className={`role-option ${formData.role === 'student' ? 'active' : ''}`}>
                                 <input
