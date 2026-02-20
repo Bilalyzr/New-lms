@@ -1,0 +1,181 @@
+Primary Brand Colors:
+🟣 Primary: #6C4CF1 (Hexoria Purple)
+🟪 Secondary: #4B3AC7
+🟢 Accent: #00C2A8
+⚪ Background: #F7F8FC
+⚫ Dark Mode: #0F172A
+📝 Text Dark: #1E293B
+📝 Text Muted: #64748B
+Now I’ll give you page-by-page color styling + animation behavior so your LMS feels like a premium SaaS product.
+🌍 1️⃣ Home Page (Public Landing)
+🎨 Color Style
+Background: #F7F8FC
+Hero section gradient:
+linear-gradient(135deg, #6C4CF1 0%, #4B3AC7 100%)
+CTA Button:
+Background: #6C4CF1
+Hover: #4B3AC7
+Secondary Button:
+Border: #6C4CF1
+Text: #6C4CF1
+✨ Animations
+Hero text → Fade up (0.5s)
+Buttons → Scale on hover (1.05)
+Featured course cards → Slide up staggered animation
+Hexagon background pattern → Slow floating animation (very subtle)
+🔍 2️⃣ Course Listing Page
+🎨 Color Style
+Background: #F7F8FC
+Filter sidebar: White #FFFFFF
+Filter active state:
+Background: #EDE9FE
+Text: #6C4CF1
+Course Card:
+Background: White
+Shadow: Soft
+Price color: #00C2A8
+✨ Animations
+Card hover:
+Lift (translateY -6px)
+Shadow increase
+Filter selection → Smooth fade
+Pagination → Slide fade transition
+📄 3️⃣ Course Details Page
+🎨 Color Style
+Title: #1E293B
+Instructor name: #6C4CF1
+Price:
+Free → #00C2A8
+Paid → #6C4CF1
+Enroll Button:
+Purple background
+Glow shadow on hover
+✨ Animations
+Curriculum accordion → Smooth height expand
+Enroll button → Pulse glow (soft)
+Section expand → 300ms ease
+🎓 4️⃣ Student Dashboard
+🎨 Color Style
+Background: #F7F8FC
+Stat cards:
+Gradient light purple tint
+Progress bar:
+Background: #E5E7EB
+Fill: #6C4CF1
+✨ Animations
+Count-up animation for stats
+Progress bar fill animation
+Card hover slight lift
+▶ 5️⃣ Course Player Page
+🎨 Color Style
+Dark Learning Mode:
+Background: #0F172A
+Sidebar: #111827
+Active lesson: Purple highlight
+Completed lesson: #00C2A8
+Progress bar:
+Fill: #6C4CF1
+✨ Animations
+Sidebar slide-in
+Lesson complete checkmark pop animation
+Video load fade-in
+This page should feel immersive and calm.
+🛒 6️⃣ Cart Page
+🎨 Color Style
+Background: #F7F8FC
+Total price highlight: #6C4CF1
+Remove button: Subtle red (soft tone)
+Checkout button:
+Purple
+Hover: Darker purple
+✨ Animations
+Item removal → Smooth collapse
+Total price update → Quick fade
+Checkout button → Subtle pulse
+💳 7️⃣ Checkout Page
+🎨 Color Style
+White card layout
+Secure badge: #00C2A8
+Payment success → Teal
+Error → Soft red
+✨ Animations
+Form input focus → Purple border glow
+Payment processing → Animated loading dots
+Success → Checkmark scale animation
+💜 8️⃣ Wishlist Page
+🎨 Color Style
+Heart icon:
+Active → #6C4CF1
+Hover → #4B3AC7
+✨ Animations
+Heart click → Pop scale
+Card hover → Lift effect
+🔔 9️⃣ Notifications Page
+🎨 Color Style
+Unread:
+Background: #EDE9FE
+Border left: Purple line
+Read:
+White background
+✨ Animations
+New notification → Slide down
+Mark as read → Fade transition
+Notification badge → Bounce effect
+⚙ 1️⃣0️⃣ Settings Page
+🎨 Color Style
+Sidebar:
+Active tab: Purple highlight
+Hover: Light purple background
+Save button:
+Teal (#00C2A8)
+Hover: Darker teal
+✨ Animations
+Tab switch → Slide fade
+Save success → Toast popup (slide from bottom)
+Toggle switch → Smooth slide animation
+👨‍🏫 Instructor Dashboard
+🎨 Color Style
+Revenue:
+Teal for positive growth
+Course status:
+Draft → Gray
+Published → Purple
+Trending → Teal
+✨ Animations
+Revenue counter animation
+Chart draw animation
+Course publish → Success toast
+🛠 Admin Dashboard
+🎨 Color Style
+Background: Clean white + light gray
+Danger actions: Soft red
+System stats: Purple gradient cards
+✨ Animations
+Charts animate on load
+User status toggle smooth switch
+Modal open fade scale
+🎨 Global UI Animation Rules
+Use:
+Duration: 200ms–400ms
+Easing: ease-in-out
+Avoid fast or flashy effects
+No bounce everywhere — only on micro interactions
+🔥 Brand Identity Consistency
+Element
+Behavior
+Primary Actions
+Purple
+Success
+Teal
+Background
+Soft gray
+Hover
+Slight lift
+Page transitions
+Fade + slight slide
+✨ Optional Premium Touch
+Add subtle glass effect in hero section
+Add animated hexagon SVG in background
+Add 6-dot loading animation (Hexoria meaning 6)
+🎯 Final HEXORIA Design Personality
+ModernPremium SaaSConfidentMinimalTech-forwardCloud-ready

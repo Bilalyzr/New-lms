@@ -1,0 +1,184 @@
+.settings-page {
+    padding: 3rem 1rem;
+    max-width: 1000px;
+}
+
+.settings-layout {
+    display: flex;
+    gap: 2rem;
+    align-items: flex-start;
+}
+
+/* Sidebar */
+.settings-sidebar {
+    width: 250px;
+    padding: 1rem 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.settings-tab {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.8rem 1.5rem;
+    background: transparent;
+    border: none;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    cursor: pointer;
+    text-align: left;
+    border-left: 3px solid transparent;
+    transition: all 0.2s var(--animation-ease);
+}
+
+.settings-tab:hover {
+    background: #f8fafc;
+    color: var(--text-dark);
+}
+
+.settings-tab.active {
+    background: rgba(108, 76, 241, 0.08);
+    /* Light purple background hover state from PRD */
+    color: var(--primary);
+    /* Active tab: Purple highlight PRD */
+    border-left-color: var(--primary);
+    font-weight: 600;
+}
+
+/* Content Area */
+.settings-content {
+    flex: 1;
+    padding: 2.5rem;
+}
+
+.btn-save {
+    background: var(--accent);
+    /* Teal #00C2A8 */
+    color: white;
+}
+
+.btn-save:hover {
+    background: #00A68F;
+    /* Darker teal hover from PRD */
+    transform: translateY(-2px);
+}
+
+/* Animations */
+.animate-slide-fade {
+    animation: slideFadeContent 0.4s var(--animation-ease);
+}
+
+@keyframes slideFadeContent {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Toggle Switch -> Smooth slide animation (PRD) */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 26px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #CBD5E1;
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .4s var(--animation-ease);
+}
+
+input:checked+.slider {
+    background-color: var(--primary);
+}
+
+input:checked+.slider:before {
+    transform: translateX(24px);
+}
+
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+/* Save Success Toast -> Toast popup (slide from bottom) */
+.save-toast {
+    position: fixed;
+    bottom: -100px;
+    /* Hidden off-screen initially */
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--text-dark);
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 500;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    transition: bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 1000;
+}
+
+.save-toast.show {
+    bottom: 40px;
+    /* Slides up smoothly */
+}
+
+@media (max-width: 768px) {
+    .settings-layout {
+        flex-direction: column;
+    }
+
+    .settings-sidebar {
+        width: 100%;
+        flex-direction: row;
+        overflow-x: auto;
+        padding: 0;
+    }
+
+    .settings-tab {
+        border-left: none;
+        border-bottom: 3px solid transparent;
+        white-space: nowrap;
+    }
+
+    .settings-tab.active {
+        border-left-color: transparent;
+        border-bottom-color: var(--primary);
+    }
+}

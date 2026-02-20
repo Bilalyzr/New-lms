@@ -1,0 +1,228 @@
+.dashboard-page {
+    padding: 3rem 1rem;
+}
+
+.dashboard-header {
+    margin-bottom: 3rem;
+}
+
+.dashboard-title {
+    font-size: 2.5rem;
+    color: var(--text-dark);
+    margin-bottom: 0.5rem;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+.stat-card {
+    display: flex;
+    align-items: center;
+    padding: 2rem;
+    gap: 1.5rem;
+    background: linear-gradient(145deg, #ffffff, #fcfcfc);
+    border: 1px solid rgba(108, 76, 241, 0.1);
+    box-shadow: 0 4px 6px -1px rgb(108 76 241 / 0.05);
+}
+
+.stat-card.card:hover {
+    /* Slight lift per requirements */
+    transform: translateY(-4px);
+    box-shadow: 0 10px 15px -1px rgb(108 76 241 / 0.1);
+}
+
+.stat-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-value {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--text-dark);
+}
+
+.stat-label {
+    color: var(--text-muted);
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+/* Animations */
+@keyframes countUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.count-up {
+    animation: countUp 0.8s ease-out forwards;
+}
+
+.learning-section {
+    margin-top: 4rem;
+}
+
+.section-subtitle {
+    font-size: 1.8rem;
+    color: var(--text-dark);
+    margin-bottom: 2rem;
+}
+
+.course-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.learning-card {
+    display: flex;
+    padding: 1.5rem;
+    gap: 2rem;
+    align-items: center;
+}
+
+.learning-img {
+    width: 200px;
+    height: 120px;
+    background: #E5E7EB;
+    border-radius: 8px;
+    flex-shrink: 0;
+}
+
+.learning-content {
+    flex: 1;
+}
+
+.learning-title {
+    font-size: 1.4rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-dark);
+}
+
+.learning-instructor {
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+}
+
+.progress-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.progress-bar {
+    flex: 1;
+    height: 8px;
+    background-color: #E5E7EB;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background-color: var(--primary);
+    border-radius: 4px;
+    animation: fillProgress 1.5s ease-out forwards;
+    width: 0;
+    /* Animated later via inline style */
+}
+
+@keyframes fillProgress {
+    from {
+        transform: scaleX(0);
+        transform-origin: left;
+    }
+
+    to {
+        transform: scaleX(1);
+        transform-origin: left;
+    }
+}
+
+.progress-text {
+    font-size: 0.9rem;
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.btn-sm {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+}
+
+.mt-3 {
+    margin-top: 1rem;
+}
+
+/* Data Tables inside Dashboards */
+.data-table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 0.5rem;
+}
+
+.data-table th,
+.data-table td {
+    padding: 1rem;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.data-table th {
+    font-weight: 600;
+    color: var(--text-muted);
+    border-bottom: 2px solid #E2E8F0;
+    background-color: var(--bg-light);
+}
+
+.data-table td {
+    border-bottom: 1px solid #E2E8F0;
+    color: var(--text-dark);
+}
+
+.data-table .hover-row:hover td {
+    background-color: rgba(108, 76, 241, 0.02);
+}
+
+.badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 99px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.badge-purple {
+    background-color: rgba(108, 76, 241, 0.1);
+    color: var(--primary);
+}
+
+.badge-gray {
+    background-color: #F1F5F9;
+    color: var(--text-muted);
+}
+
+@media (max-width: 768px) {
+    .learning-card {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .learning-img {
+        width: 100%;
+        height: 160px;
+    }
+}

@@ -1,0 +1,112 @@
+.wishlist-page {
+    padding: 3rem 1rem;
+    max-width: 1200px;
+}
+
+.page-header {
+    margin-bottom: 3rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #E5E7EB;
+}
+
+.empty-state {
+    padding: 4rem 2rem;
+    border: 1px dashed #CBD5E1;
+    background: white;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.empty-state h2 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.mx-auto {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.mb-2 {
+    margin-bottom: 0.5rem;
+}
+
+/* Grid Layout */
+.wishlist-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 2rem;
+}
+
+.wishlist-card {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+    transition: all 300ms var(--animation-ease);
+    /* Card Hover Lift effect */
+}
+
+.wishlist-card:hover {
+    /* 💡 Lift effect from PRD */
+    transform: translateY(-8px);
+    box-shadow: 0 12px 20px -5px rgba(0, 0, 0, 0.1);
+}
+
+.wishlist-img-box {
+    position: relative;
+}
+
+.wishlist-img {
+    height: 160px;
+    background: linear-gradient(135deg, var(--bg-dark), var(--bg-sidebar));
+}
+
+.remove-wishlist-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s;
+}
+
+.hover-red:hover {
+    background: #FEE2E2;
+    /* Subtle red (soft tone) PRD logic */
+    color: #EF4444;
+    transform: scale(1.1);
+}
+
+.wishlist-body {
+    padding: 1.5rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.mt-1 {
+    margin-top: 0.25rem;
+}
+
+.wishlist-footer {
+    margin-top: auto;
+    padding-top: 1rem;
+    border-top: 1px solid #F1F5F9;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.price {
+    font-size: 1.25rem;
+}

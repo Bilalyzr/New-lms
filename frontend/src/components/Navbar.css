@@ -1,0 +1,83 @@
+.navbar {
+    background: white;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+}
+
+.navbar-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem 1rem;
+    flex-wrap: nowrap;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 0.1rem;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: var(--text-dark);
+}
+
+.logo-3d-wrapper {
+    position: relative;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform-style: preserve-3d;
+    transform: perspective(300px) rotateX(15deg) rotateY(-15deg);
+    transition: transform 0.4s var(--animation-ease);
+}
+
+.logo:hover .logo-3d-wrapper {
+    transform: perspective(300px) rotateX(0deg) rotateY(0deg) scale(1.1);
+}
+
+.logo-layer-1 {
+    position: absolute;
+    color: var(--primary);
+    transform: translateZ(10px);
+}
+
+.logo-layer-2 {
+    position: absolute;
+    color: var(--accent);
+    transform: translateZ(0px);
+    opacity: 0.5;
+}
+
+.logo-layer-3 {
+    position: absolute;
+    color: var(--secondary);
+    transform: translateZ(-10px);
+    opacity: 0.3;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.nav-link {
+    text-decoration: none;
+    color: var(--text-muted);
+    font-weight: 500;
+    transition: color var(--animation-duration) var(--animation-ease);
+}
+
+.nav-link:hover {
+    color: var(--primary);
+}
+
+.auth-buttons {
+    display: flex;
+    gap: 1rem;
+}

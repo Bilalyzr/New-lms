@@ -1,0 +1,383 @@
+.course-details-page {
+    padding-bottom: 5rem;
+    background-color: var(--bg-light);
+}
+
+.course-hero {
+    background: var(--bg-dark);
+    /* #0F172A */
+    color: white;
+    padding: 4rem 0;
+}
+
+.hero-grid {
+    display: flex;
+    position: relative;
+}
+
+.course-hero-content {
+    max-width: 60%;
+}
+
+.breadcrumbs {
+    color: var(--primary);
+    /* #6C4CF1 */
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+.course-title-hero {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    line-height: 1.2;
+}
+
+.course-subtitle-hero {
+    font-size: 1.15rem;
+    color: #CBD5E1;
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+}
+
+.course-meta-hero {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    font-size: 0.95rem;
+}
+
+.rating-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    background: rgba(255, 193, 7, 0.2);
+    color: #FFC107;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-weight: 700;
+}
+
+.course-creator {
+    margin-bottom: 1rem;
+}
+
+.instructor-name {
+    color: var(--primary);
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.course-icons-hero {
+    display: flex;
+    gap: 1.5rem;
+    font-size: 0.9rem;
+    color: #94A3B8;
+}
+
+.course-icons-hero span {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Layout */
+.details-layout {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 3rem;
+    margin-top: -3rem;
+    /* pull up */
+    position: relative;
+}
+
+/* Tabs */
+.details-tabs {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    border-bottom: 2px solid transparent;
+}
+
+.tab-btn {
+    background: none;
+    border: none;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    position: relative;
+    transition: color 0.2s;
+}
+
+.tab-btn:hover {
+    color: var(--text-dark);
+}
+
+.tab-btn.active {
+    color: var(--text-dark);
+}
+
+.tab-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1rem;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: var(--primary);
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        transform: scaleX(0);
+    }
+
+    to {
+        transform: scaleX(1);
+    }
+}
+
+/* Tab Content Areas */
+.tab-content {
+    padding: 2rem;
+}
+
+.learning-outcomes {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    list-style: none;
+}
+
+.learning-outcomes li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    color: var(--text-dark);
+}
+
+/* Expanded Card Curriculum Animation */
+.accordion-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.accordion-item {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+    overflow: hidden;
+    transition: all 300ms ease;
+    /* Section expand  300ms ease */
+}
+
+.accordion-header {
+    padding: 1.25rem 1.5rem;
+    background: #F8FAFC;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    border-bottom: 1px solid #E5E7EB;
+}
+
+.accordion-header h3 {
+    font-size: 1.1rem;
+    margin: 0;
+}
+
+.accordion-item.collapsed .accordion-body {
+    height: 0;
+    padding: 0;
+    opacity: 0;
+}
+
+.accordion-body {
+    padding: 0.5rem 0;
+    transition: height 300ms ease;
+}
+
+.lecture-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #F1F5F9;
+    cursor: pointer;
+}
+
+.lecture-row:hover {
+    background: #F8FAFC;
+}
+
+.lecture-title {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: var(--text-dark);
+    font-size: 0.95rem;
+}
+
+.lecture-time {
+    font-size: 0.85rem;
+}
+
+.text-sm {
+    font-size: 0.8rem;
+}
+
+.font-bold {
+    font-weight: 700;
+}
+
+/* Floating Sidebar Card */
+.enrollment-card {
+    position: sticky;
+    top: 100px;
+    /* Offset from sticky navbar */
+    z-index: 20;
+    padding: 0;
+    overflow: hidden;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.cover-img-placeholder {
+    height: 190px;
+    background: linear-gradient(135deg, #1E293B, #0F172A);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.play-overlay {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+    transition: transform 0.2s;
+}
+
+.cover-img-placeholder:hover .play-overlay {
+    transform: scale(1.1);
+}
+
+.enrollment-body {
+    padding: 1.5rem;
+}
+
+.price-tag {
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+}
+
+/* Enroll Button -> Pulse glow (soft) */
+.pulse-glow-btn {
+    box-shadow: 0 0 0 0 rgba(108, 76, 241, 0.5);
+    animation: pulse-primary 2s infinite;
+}
+
+@keyframes pulse-primary {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(108, 76, 241, 0.4);
+    }
+
+    70% {
+        transform: scale(1.02);
+        box-shadow: 0 0 0 10px rgba(108, 76, 241, 0);
+    }
+
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(108, 76, 241, 0);
+    }
+}
+
+.interaction-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.flex-1 {
+    flex: 1;
+}
+
+.icon-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.6rem;
+}
+
+/* Heart Click -> Pop scale */
+.heart-active {
+    animation: heartPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes heartPop {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.5);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.course-includes {
+    font-size: 0.9rem;
+    border-top: 1px solid #E5E7EB;
+    padding-top: 1.5rem;
+}
+
+.include-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 0.6rem;
+}
+
+.mb-3 {
+    margin-bottom: 1rem;
+}
+
+.mb-4 {
+    margin-bottom: 1.5rem;
+}
+
+.mt-4 {
+    margin-top: 1.5rem;
+}
+
+@media (max-width: 900px) {
+    .details-layout {
+        grid-template-columns: 1fr;
+        margin-top: 2rem;
+    }
+
+    .course-hero-content {
+        max-width: 100%;
+    }
+
+    .enrollment-card {
+        position: static;
+    }
+
+    .learning-outcomes {
+        grid-template-columns: 1fr;
+    }
+}

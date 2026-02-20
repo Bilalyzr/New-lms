@@ -1,0 +1,129 @@
+.notifications-page {
+    padding: 3rem 1rem;
+    max-width: 800px;
+}
+
+.notif-header {
+    padding: 1.5rem 2rem;
+}
+
+/* Badge Bounce Effect PRD logic */
+.notif-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    background: var(--accent);
+    /* Teal bounce badge */
+    color: white;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    font-size: 0.7rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid white;
+    animation: bounceBadge 2s infinite ease-in-out;
+}
+
+@keyframes bounceBadge {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-4px);
+    }
+}
+
+/* Animations PRD */
+.new-slide-down {
+    animation: slideDownFade 0.5s ease-out forwards;
+}
+
+@keyframes slideDownFade {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.transition-fade {
+    /* Mark as read -> Fade transition */
+    transition: all 0.5s ease;
+}
+
+/* Read/Unread Color Mechanics PRD */
+.notif-card {
+    padding: 1rem;
+    position: relative;
+}
+
+.notif-card.read {
+    background: white;
+    border: 1px solid #F1F5F9;
+    box-shadow: none;
+}
+
+.notif-card.unread {
+    background: #EDE9FE;
+    /* Specific unread purple bg requested */
+    border-left: 4px solid var(--primary);
+    /* Left border purple line requested */
+    box-shadow: 0 4px 6px -1px rgba(108, 76, 241, 0.05);
+    /* Slight shadow */
+}
+
+.bg-primary-light {
+    background: rgba(108, 76, 241, 0.15);
+    border-radius: 50%;
+    padding: 12px;
+}
+
+.bg-light {
+    background: #F8FAFC;
+    border-radius: 50%;
+    padding: 12px;
+}
+
+.notif-title {
+    font-size: 1.05rem;
+}
+
+.notif-message {
+    font-size: 0.95rem;
+    line-height: 1.4;
+}
+
+.inline-block {
+    display: inline-block;
+}
+
+.mark-read-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+}
+
+.mark-read-btn:hover {
+    opacity: 1;
+}
+
+.text-2xl {
+    font-size: 1.5rem;
+}
+
+.m-0 {
+    margin: 0;
+}

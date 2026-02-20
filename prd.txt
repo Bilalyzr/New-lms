@@ -1,0 +1,218 @@
+PRODUCT REQUIREMENTS DOCUMENT (PRD)
+1️⃣ Product Overview
+1.1 Product Name
+EduCloud LMS (Temporary Name)
+1.2 Product Vision
+To build a scalable, cloud-hosted Learning Management System (LMS) that allows instructors to create and sell courses while enabling students to enroll, learn, and track progress — similar to Udemy.
+1.3 Product Type
+Web Application (SaaS-based LMS)
+Cloud-native deployment
+Multi-role platform
+2️⃣ Objectives
+Primary Goals
+Build a full-stack LMS system from scratch
+Implement a Tutor LMS–style course builder
+Integrate secure cloud storage (AWS S3)
+Deploy on AWS infrastructure
+Support course selling with payment integration
+Provide role-based dashboards
+3️⃣ Target Users
+3.1 Students
+Browse courses
+Add to wishlist/cart
+Purchase courses
+Learn through video lessons
+Track progress
+Download certificates
+3.2 Instructors
+Create and manage courses
+Upload lessons
+View enrolled students
+Track revenue
+3.3 Admin
+Manage users
+Approve/remove courses
+Monitor payments
+Platform analytics
+4️⃣ User Roles & Permissions
+Role
+Permissions
+Student
+Enroll, Learn, Wishlist, Cart
+Instructor
+Create/Edit Course, View Revenue
+Admin
+Manage Users, Courses, Reports
+Role stored in:
+users.role ENUM('student','instructor','admin')
+5️⃣ Core Features
+5.1 Authentication System
+Features:
+User Registration
+Login
+JWT Authentication
+Password Hashing (bcrypt)
+Role-Based Middleware
+APIs:
+POST /auth/registerPOST /auth/login
+5.2 Course Builder (Tutor LMS Replica)
+Multi-Step Wizard:
+Basics
+Curriculum
+Additional
+Review & Publish
+Step 1: Basics
+Fields:
+Title
+Description
+Thumbnail
+Intro Video
+Difficulty
+Price
+Max Students
+Visibility
+Step 2: Curriculum
+Structure:
+Course └── Sections       └── Lessons
+Features:
+Add section
+Add lesson
+Upload video
+Reorder lessons
+Step 3: Additional
+Fields:
+Requirements
+Target Audience
+Learning Outcomes
+Duration
+Certificate Toggle
+Completion Criteria
+Category
+Tags
+FAQs
+SEO metadata
+Step 4: Publish
+Validate required fields
+Save as Draft
+Publish
+5.3 Student Learning System
+Features:
+Course Player
+Video Streaming
+Mark Lesson Complete
+Progress Tracking
+Completion Percentage
+Certificate Download
+5.4 E-Commerce System
+Wishlist
+POST /wishlist/:courseIdGET /wishlist
+Cart
+POST /cart/:courseIdGET /cartDELETE /cart/:courseId
+Checkout
+Payment gateway integration (Stripe)
+Webhook verification
+Enrollment creation
+5.5 Search System
+Features:
+Keyword search
+Filter by category
+Filter by level
+Filter by price
+API:
+GET /courses/search?q=keyword
+5.6 Notifications System
+Examples:
+Payment success
+Course published
+Course updated
+Table:
+notifications ( id, user_id, title, message, is_read, created_at)
+5.7 Settings Page
+Student:
+Edit profile
+Change password
+Instructor:
+Bio
+Payout details
+Admin:
+Platform commission
+Global settings
+6️⃣ Database Requirements
+Core Tables:
+users
+courses
+sections
+lessons
+enrollments
+progress
+wishlist
+cart
+payments
+notifications
+categories
+PostgreSQL used via AWS RDS.
+7️⃣ Non-Functional Requirements
+7.1 Performance
+Use CloudFront CDN
+Optimize API responses
+Use indexing in PostgreSQL
+7.2 Security
+HTTPS
+JWT expiry
+Role-based access control
+Private S3 bucket
+Secure environment variables
+Payment verification
+7.3 Scalability
+EC2 deployment
+Optional Load Balancer
+RDS managed DB
+S3 for static media
+8️⃣ Cloud Architecture
+User Browser     ↓React Frontend (S3 + CloudFront)     ↓Node.js API (EC2)     ↓PostgreSQL (RDS)     ↓AWS S3 (Video Storage)
+Optional:
+Auto Scaling Group
+Load Balancer
+9️⃣ Tech Stack
+Frontend:
+React
+Axios
+React Router
+Backend:
+Node.js
+Express
+JWT
+bcrypt
+Database:
+PostgreSQL (RDS)
+Cloud:
+AWS EC2
+AWS RDS
+AWS S3
+AWS CloudFront
+🔟 Success Metrics
+User registration success
+Course creation success
+Payment completion rate
+Video streaming success
+API response time < 300ms
+1️⃣1️⃣ Risks & Mitigation
+Risk
+Mitigation
+Video overload on EC2
+Use S3
+Unauthorized access
+Role middleware
+Payment fraud
+Webhook verification
+Data loss
+RDS backups
+Performance issue
+CDN + indexing
+1️⃣2️⃣ Future Enhancements
+Quiz system
+Certificate PDF generation
+Instructor payouts
+Live classes
+AI-based course recommendations
+Mobile app
