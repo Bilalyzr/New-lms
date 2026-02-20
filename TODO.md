@@ -40,7 +40,7 @@
 - [x] Connect `pg` pool to Express API
 - [x] Create User Auth Routes (Register, Login, JWT tokens)
 - [x] Create Courses Routes (Fetch, Create, Update)
-- [ ] Wire up React Frontend to Axios / Live API
+- [x] Wire up React Frontend to Axios / Live API
 
 ## Phase 8: Production Build (✅ Completed)
 - [x] Test frontend to backend full workflow locally
