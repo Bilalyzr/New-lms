@@ -21,19 +21,7 @@ export default function CourseListing() {
         const fetchCourses = async () => {
             try {
                 const res = await axios.get('http://localhost:5000/api/courses');
-                // Use backend data, fallback to mock data if empty
-                if (res.data.length > 0) {
-                    setCourses(res.data);
-                } else {
-                    setCourses([
-                        { id: 1, title: 'Complete Web Developer Bootcamp', category: 'Development', rating: 4.8, price: 89.99, hours: 45, instructor: 'Dr. Angela Yu' },
-                        { id: 2, title: 'Machine Learning A-Z', category: 'Development', rating: 4.7, price: 99.99, hours: 42, instructor: 'Kirill Eremenko' },
-                        { id: 3, title: 'The Complete Digital Marketing Course', category: 'Marketing', rating: 4.6, price: 79.99, hours: 22, instructor: 'Rob Percival' },
-                        { id: 4, title: 'UI/UX Design Masterclass', category: 'Design', rating: 4.9, price: 85.00, hours: 15, instructor: 'Jane Smith' },
-                        { id: 5, title: 'AWS Certified Solutions Architect', category: 'IT & Software', rating: 4.7, price: 110.00, hours: 30, instructor: 'Stephane Maarek' },
-                        { id: 6, title: 'The Complete Advanced Business Prep', category: 'Business', rating: 4.5, price: 65.00, hours: 12, instructor: 'Tom Harris' },
-                    ]);
-                }
+                setCourses(res.data);
                 setLoading(false);
             } catch (error) {
                 console.error("Error fetching courses:", error);
@@ -89,28 +77,32 @@ export default function CourseListing() {
                 {/* Course Grid */}
                 <main className="course-grid-container">
                     <div className="courses-grid">
-                        {filteredCourses.map((course, index) => (
-                            <div
-                                className="course-card card animate-fade-up"
-                                key={course.id}
-                                style={{ animationDelay: `${index * 100}ms` }}
-                            >
-                                <div className="course-img-placeholder"></div>
-                                <div className="course-content">
-                                    <span className="course-category">{course.category}</span>
-                                    <h3 className="course-title">{course.title}</h3>
-                                    <p className="course-instructor">{course.instructor}</p>
-                                    <div className="course-meta">
-                                        <span className="meta-item"><Star size={14} className="text-secondary" /> {course.rating}</span>
-                                        <span className="meta-item"><Clock size={14} className="text-muted" /> {course.hours}h</span>
-                                    </div>
-                                    <div className="course-footer">
-                                        <div className="course-price text-accent">${course.price}</div>
-                                        <Link to={`/course/${course.id}`} className="btn-secondary add-btn" style={{ textDecoration: 'none' }}>Details</Link>
+                        {filteredCourses.length === 0 ? (
+                            <div className="text-muted p-10 col-span-full text-center">No courses found matching your criteria.</div>
+                        ) : (
+                            filteredCourses.map((course, index) => (
+                                <div
+                                    className="course-card card animate-fade-up"
+                                    key={course.id}
+                                    style={{ animationDelay: `${index * 100}ms` }}
+                                >
+                                    <div className="course-img-placeholder"></div>
+                                    <div className="course-content">
+                                        <span className="course-category">{course.category}</span>
+                                        <h3 className="course-title">{course.title}</h3>
+                                        <p className="course-instructor">{course.instructor}</p>
+                                        <div className="course-meta">
+                                            <span className="meta-item"><Star size={14} className="text-secondary" /> {course.rating}</span>
+                                            <span className="meta-item"><Clock size={14} className="text-muted" /> {course.hours}h</span>
+                                        </div>
+                                        <div className="course-footer">
+                                            <div className="course-price text-accent">${course.price}</div>
+                                            <Link to={`/course/${course.id}`} className="btn-secondary add-btn" style={{ textDecoration: 'none' }}>Details</Link>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        ))}
+                            ))
+                        )}
                     </div>
 
                     <div className="pagination animate-slide-fade">

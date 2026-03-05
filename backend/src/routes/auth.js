@@ -52,13 +52,18 @@ router.post('/login', async (req, res) => {
     try {
         const { email, password, role } = req.body;
 
-        // Find user by email and role
-        const userResult = await pool.query('SELECT * FROM users WHERE email = $1 AND role = $2', [email, role]);
+        // Find user by email
+        const userResult = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
         if (userResult.rows.length === 0) {
             return res.status(400).json({ message: 'Invalid Credentials' });
         }
 
         const user = userResult.rows[0];
+
+        // Ensure the role matches the requested role
+        if (user.role !== role) {
+            return res.status(403).json({ message: `This email is registered for a ${user.role} account. Please select the correct role.` });
+        }
 
         // Check password
         const isMatch = await bcrypt.compare(password, user.password_hash);

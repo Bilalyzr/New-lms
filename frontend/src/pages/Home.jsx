@@ -101,37 +101,11 @@ export default function Home() {
                         <h2 className="section-title mb-1">Top Rated Programs</h2>
                         <p className="text-muted">Explore our most popular deeply-detailed courses.</p>
                     </div>
-                    <Link to="/courses" className="btn-secondary btn-sm text-primary font-bold">See all courses &rarr;</Link>
+                    <Link to="/courses" className="btn btn-secondary btn-sm text-primary font-bold">See all courses &rarr;</Link>
                 </div>
 
                 <div className="course-grid">
-                    {[
-                        { id: 1, title: 'Full-Stack Cloud Applied Architecture', img: 'https://images.unsplash.com/photo-1662010021854-e67c538ea7a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80', cat: 'Development', price: '99.00', rating: 4.8, students: '12K', hours: 45, inst: 'Dr. Angela Yu' },
-                        { id: 2, title: 'Advanced UI/UX 3D Animations', img: 'https://images.unsplash.com/photo-1558655146-d09347e92766?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80', cat: 'Design', price: '120.00', rating: 4.9, students: '8K', hours: 32, inst: 'Jane Smith' },
-                        { id: 3, title: 'Machine Learning & Python A-Z', img: 'https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80', cat: 'Data Science', price: '85.00', rating: 4.7, students: '25K', hours: 60, inst: 'Kirill Eremenko' }
-                    ].map((course, index) => (
-                        <div className="card course-card detailed-course-card animate-slide-up hover-lift shadow-glow" style={{ animationDelay: `${index * 150}ms` }} key={course.id}>
-                            <div className="course-img-wrapper relative overflow-hidden">
-                                <img src={course.img} alt={course.title} className="w-full h-48 object-cover transition-transform duration-500 hover-scale-img" />
-                                <div className="absolute top-3 right-3 bg-white px-2 py-1 rounded text-xs font-bold shadow-sm">{course.cat}</div>
-                            </div>
-                            <div className="course-content p-5">
-                                <h3 className="course-title text-lg mb-2 line-clamp-2" title={course.title}>{course.title}</h3>
-                                <p className="text-sm text-muted mb-3">By {course.inst}</p>
-
-                                <div className="flex gap-4 text-xs font-medium text-gray mb-4 border-b pb-4">
-                                    <span className="flex items-center gap-1"><Clock size={14} className="text-secondary" /> {course.hours}h</span>
-                                    <span className="flex items-center gap-1"><Users size={14} className="text-primary" /> {course.students}</span>
-                                    <span className="flex items-center gap-1 text-accent"><Star size={14} fill="currentColor" /> {course.rating}</span>
-                                </div>
-
-                                <div className="course-footer flex justify-between items-center mt-auto">
-                                    <div className="course-price text-xl font-bold text-dark">${course.price}</div>
-                                    <Link to={`/course/${course.id}`} className="btn btn-primary px-4 py-2 text-sm rounded-lg hover-glow">Enroll</Link>
-                                </div>
-                            </div>
-                        </div>
-                    ))}
+                    <p className="text-muted p-4 col-span-full">No top rated programs available at the moment.</p>
                 </div>
             </section>
         </div>

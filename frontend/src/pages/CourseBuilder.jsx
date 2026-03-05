@@ -1,12 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { AuthContext } from '../context/AuthContext';
 import './CourseBuilder.css';
 import { Check, ChevronRight, Video, FileText, Settings, Flag } from 'lucide-react';
 
 export default function CourseBuilder() {
     const navigate = useNavigate();
+    const { token } = useContext(AuthContext);
     const [currentStep, setCurrentStep] = useState(1);
     const [isPublished, setIsPublished] = useState(false);
+    const [createdCourseId, setCreatedCourseId] = useState(null);
     const [formData, setFormData] = useState({
         title: '',
         description: '',
@@ -14,8 +18,20 @@ export default function CourseBuilder() {
         category: 'Development',
     });
 
-    const handlePublish = () => {
-        setIsPublished(true);
+    const handlePublish = async () => {
+        try {
+            const res = await axios.post('http://localhost:5000/api/courses', {
+                ...formData,
+                status: 'Published',
+            }, {
+                headers: { 'x-auth-token': token }
+            });
+            setCreatedCourseId(res.data.id);
+            setIsPublished(true);
+        } catch (err) {
+            console.error('Error publishing course', err);
+            alert('Failed to publish course. Please try again.');
+        }
     };
 
     const steps = [
@@ -226,7 +242,7 @@ export default function CourseBuilder() {
 
                         <div className="flex gap-4">
                             <button className="btn btn-secondary px-6" onClick={() => navigate('/instructor')}>Return to Dashboard</button>
-                            <button className="btn btn-primary px-6" onClick={() => navigate(`/course/1`)}>View Course</button>
+                            <button className="btn btn-primary px-6" onClick={() => navigate(createdCourseId ? `/course/${createdCourseId}` : '/courses')}>View Course</button>
                         </div>
                     </div>
                 )}

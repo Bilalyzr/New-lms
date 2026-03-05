@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Mail, Lock, LogIn } from 'lucide-react';
+import { Mail, Lock, LogIn, AlertCircle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import './Auth.css';
 
@@ -50,8 +50,9 @@ export default function Login() {
                 </div>
 
                 {errorMsg && (
-                    <div className="bg-red-50 text-red-600 p-3 rounded-lg mb-4 text-sm border border-red-200">
-                        {errorMsg}
+                    <div className="error-box animate-shake">
+                        <AlertCircle size={20} />
+                        <span>{errorMsg}</span>
                     </div>
                 )}
 
