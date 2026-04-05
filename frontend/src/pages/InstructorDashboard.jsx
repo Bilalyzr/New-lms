@@ -7,7 +7,8 @@ import './Dashboard.css';
 
 export default function InstructorDashboard() {
     const navigate = useNavigate();
-    const { token } = useContext(AuthContext);
+    const { user } = useContext(AuthContext);
+    const token = user?.token;
     const [courses, setCourses] = useState([]);
 
     useEffect(() => {
@@ -98,12 +99,35 @@ export default function InstructorDashboard() {
                                                 {course.status || 'Draft'}
                                             </span>
                                         </td>
-                                        <td className="p-4">
+                                        <td className="p-4 flex gap-2">
+                                            {course.status === 'Published' ? (
+                                                <button
+                                                    className="btn btn-secondary btn-sm"
+                                                    onClick={() => navigate(`/course/${course.id}`)}
+                                                >
+                                                    View
+                                                </button>
+                                            ) : course.status === 'Pending' ? (
+                                                <button
+                                                    className="btn btn-sm"
+                                                    disabled
+                                                    style={{ opacity: 0.6, cursor: 'not-allowed', background: '#f0a500', color: '#fff', border: 'none', padding: '6px 12px', borderRadius: '6px', fontSize: '13px' }}
+                                                >
+                                                    ⏳ Awaiting Approval
+                                                </button>
+                                            ) : (
+                                                <button
+                                                    className="btn btn-secondary btn-sm"
+                                                    onClick={() => navigate(`/build/${course.id}`)}
+                                                >
+                                                    Cont. Build
+                                                </button>
+                                            )}
                                             <button
-                                                className="btn btn-secondary btn-sm"
-                                                onClick={() => navigate(course.status === 'Published' ? `/course/${course.id}` : '/build')}
+                                                className="btn btn-primary btn-sm ml-2"
+                                                onClick={() => navigate(`/quiz-manager/${course.id}`)}
                                             >
-                                                {course.status === 'Published' ? 'Edit' : 'Cont. Build'}
+                                                Quizzes
                                             </button>
                                         </td>
                                     </tr>

@@ -1,8 +1,63 @@
-import React from 'react';
-import { Users, Server, AlertCircle, Database } from 'lucide-react';
+import React, { useState, useEffect, useContext } from 'react';
+import { Users, Server, AlertCircle, Database, Check, X } from 'lucide-react';
+import axios from 'axios';
+import { AuthContext } from '../context/AuthContext';
 import './Dashboard.css';
 
 export default function AdminDashboard() {
+    const { user } = useContext(AuthContext);
+    const [pendingCourses, setPendingCourses] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        if (user?.token) {
+            fetchPendingCourses();
+        }
+    }, [user]);
+
+    const fetchPendingCourses = async () => {
+        setLoading(true);
+        setError(null);
+        try {
+            const res = await axios.get('http://localhost:5000/api/admin/courses/pending', {
+                headers: { 'x-auth-token': user?.token }
+            });
+            setPendingCourses(res.data);
+        } catch (err) {
+            console.error('Error fetching pending courses:', err);
+            setError(err.response?.data?.message || 'Failed to load pending courses. Make sure you are logged in as admin.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleApprove = async (courseId, courseTitle) => {
+        try {
+            await axios.put(`http://localhost:5000/api/admin/courses/${courseId}/approve`, {}, {
+                headers: { 'x-auth-token': user?.token }
+            });
+            alert(`Course "${courseTitle}" approved successfully!`);
+            fetchPendingCourses(); // Refresh list
+        } catch (err) {
+            console.error('Error approving course:', err);
+            alert('Failed to approve course');
+        }
+    };
+
+    const handleReject = async (courseId, courseTitle) => {
+        try {
+            await axios.put(`http://localhost:5000/api/admin/courses/${courseId}/reject`, {}, {
+                headers: { 'x-auth-token': user?.token }
+            });
+            alert(`Course "${courseTitle}" rejected.`);
+            fetchPendingCourses(); // Refresh list
+        } catch (err) {
+            console.error('Error rejecting course:', err);
+            alert('Failed to reject course');
+        }
+    };
+
     const handleAction = (e, message) => {
         e.preventDefault();
         alert(message);
@@ -43,32 +98,48 @@ export default function AdminDashboard() {
             <div className="grid-2-col">
                 {/* User Management Module */}
                 <section className="card p-5 shrink-0">
-                    <h2 className="section-title text-xl mb-4 text-dark">Recent Flagged Activity</h2>
-                    <div className="flagged-item mb-3 p-3 bg-light border-radius">
-                        <div className="flex items-start justify-between">
-                            <div className="flex gap-3">
-                                <AlertCircle className="text-red mt-1" size={18} />
-                                <div>
-                                    <h4 className="font-bold text-sm">Failed Payment Webhook</h4>
-                                    <p className="text-xs text-muted">Stripe integration returned error for User #1029</p>
+                    <h2 className="section-title text-xl mb-4 text-dark">Course Approvals ({pendingCourses.length})</h2>
+                    
+                    {loading ? (
+                        <p className="text-muted">Loading pending courses...</p>
+                    ) : error ? (
+                        <div className="p-4 bg-red-50 border border-red-200 rounded text-red-700 text-sm">
+                            <strong>Error:</strong> {error}
+                        </div>
+                    ) : pendingCourses.length === 0 ? (
+                        <p className="text-muted p-4 text-center bg-light border-radius">No courses pending approval. ✅</p>
+                    ) : (
+                        pendingCourses.map(course => (
+                            <div key={course.id} className="flagged-item mb-3 p-3 bg-light border-radius">
+                                <div className="flex items-start justify-between">
+                                    <div className="flex gap-3">
+                                        <AlertCircle className="text-accent mt-1" size={18} />
+                                        <div>
+                                            <h4 className="font-bold text-sm">{course.title}</h4>
+                                            <p className="text-xs text-muted">By {course.instructor || 'Unknown Instructor'} • {course.category}</p>
+                                            <p className="text-xs text-muted">Status: <span className="font-semibold text-accent">{course.status}</span></p>
+                                        </div>
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <button 
+                                            className="btn-secondary btn-sm text-red hover-red-bg border-red flex items-center justify-center p-2" 
+                                            onClick={() => handleReject(course.id, course.title)}
+                                            title="Reject Course"
+                                        >
+                                            <X size={16} />
+                                        </button>
+                                        <button 
+                                            className="btn btn-primary btn-sm flex items-center justify-center p-2" 
+                                            onClick={() => handleApprove(course.id, course.title)}
+                                            title="Approve Course"
+                                        >
+                                            <Check size={16} />
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
-                            {/* PRD: Danger actions: Soft red */}
-                            <button className="btn-secondary btn-sm text-red hover-red-bg border-red" onClick={(e) => handleAction(e, 'Opening payment logs for User #1029...')}>Review</button>
-                        </div>
-                    </div>
-                    <div className="flagged-item p-3 bg-light border-radius">
-                        <div className="flex items-start justify-between">
-                            <div className="flex gap-3">
-                                <AlertCircle className="text-red mt-1" size={18} />
-                                <div>
-                                    <h4 className="font-bold text-sm">Course Approval Pending</h4>
-                                    <p className="text-xs text-muted">"React Native Masterclass" by Sarah Connor waiting review</p>
-                                </div>
-                            </div>
-                            <button className="btn btn-primary btn-sm" onClick={(e) => handleAction(e, 'Course React Native Masterclass securely approved!')}>Approve</button>
-                        </div>
-                    </div>
+                        ))
+                    )}
                 </section>
 
                 {/* Global Configuration Module */}

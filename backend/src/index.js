@@ -13,6 +13,8 @@ app.use(express.json());
 // Routes
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/courses', require('./routes/courses'));
+app.use('/api/learn', require('./routes/learn'));
+app.use('/api/admin', require('./routes/admin'));
 
 app.get('/', (req, res) => {
     res.send('EduCloud API is running');

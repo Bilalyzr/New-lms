@@ -1,41 +1,87 @@
-import React, { useState } from 'react';
-import { Play, Check, Heart, Share2, Star, Clock, Globe, Award } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useContext } from 'react';
+import { Play, Check, Heart, Share2, Star, Clock, Globe, Award, AlertCircle } from 'lucide-react';
+import { useParams, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { AuthContext } from '../context/AuthContext';
 import './CourseDetails.css';
 
 export default function CourseDetails() {
+    const { id } = useParams();
     const [activeTab, setActiveTab] = useState('curriculum');
     const [isWishlisted, setIsWishlisted] = useState(false);
+    const [course, setCourse] = useState(null);
+    const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
+    const { user } = useContext(AuthContext);
 
-    const handleEnroll = () => {
-        navigate('/cart');
+    useEffect(() => {
+        const fetchCourse = async () => {
+            try {
+                const res = await axios.get(`http://localhost:5000/api/courses/${id}`);
+                setCourse(res.data);
+            } catch (err) {
+                console.error("Error fetching course", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchCourse();
+    }, [id]);
+
+    const handleEnroll = async () => {
+        if (!user) {
+            navigate('/login');
+            return;
+        }
+        
+        try {
+            await axios.post(`http://localhost:5000/api/learn/${id}/enroll`, {}, {
+                headers: { 'x-auth-token': user.token }
+            });
+            alert("Enrollment successful!");
+            navigate(`/learn/${id}`);
+        } catch (err) {
+            if (err.response?.data?.message === 'Already enrolled in this course') {
+                navigate(`/learn/${id}`);
+            } else {
+                alert(err.response?.data?.message || 'Error enrolling');
+            }
+        }
     };
+
+    if (loading) return <div className="p-8 text-center text-muted">Loading course details...</div>;
+    if (!course) return <div className="p-8 text-center text-red-500">Course not found.</div>;
+
+    const totalLectures = course.curriculum?.reduce((sum, sec) => sum + (sec.lessons?.length || 0), 0) || 0;
 
     return (
         <div className="course-details-page bg-light">
             {/* Dark Header Hero */}
-            <section className="course-hero">
-                <div className="container hero-grid">
+            <section className="course-hero relative">
+                {course.status !== 'Published' && (
+                    <div className="absolute top-0 left-0 w-full bg-accent text-white text-center py-2 font-bold z-10 flex justify-center items-center gap-2">
+                        <AlertCircle size={18} /> {course.status === 'Pending' ? 'This course is pending admin approval.' : 'This course is a draft.'} Preview Mode.
+                    </div>
+                )}
+                <div className={`container hero-grid ${course.status !== 'Published' ? 'mt-8' : ''}`}>
                     <div className="course-hero-content animate-fade-up">
                         <div className="breadcrumbs">
-                            Development &gt; Web Development
+                            {course.category}
                         </div>
-                        <h1 className="course-title-hero">Full-Stack Cloud Applied Architecture</h1>
+                        <h1 className="course-title-hero">{course.title}</h1>
                         <p className="course-subtitle-hero">
-                            Master the art of building scalable, cloud-native SaaS platforms using React, Node.js, and AWS.
+                            {course.description || "Master the concepts with practical, hands-on learning."}
                         </p>
                         <div className="course-meta-hero">
-                            <span className="rating-badge"><Star size={16} fill="currentColor" /> 4.8</span>
-                            <span>(12,344 ratings)</span>
-                            <span>45,112 students enrolled</span>
+                            <span className="rating-badge"><Star size={16} fill="currentColor" /> {course.rating || '0.0'}</span>
+                            <span>{course.students_enrolled || 0} students enrolled</span>
                         </div>
                         <div className="course-creator">
-                            Created by <span className="instructor-name">Dr. Angela Yu</span>
+                            Created by <span className="instructor-name">{course.instructor || 'Hexoria Instructor'}</span>
                         </div>
                         <div className="course-icons-hero">
-                            <span><Clock size={16} /> 45 hours on-demand video</span>
-                            <span><Globe size={16} /> English, Spanish, French</span>
+                            <span><Clock size={16} /> self-paced learning</span>
+                            <span><Globe size={16} /> English</span>
                         </div>
                     </div>
                 </div>
@@ -59,18 +105,6 @@ export default function CourseDetails() {
                         >
                             Overview
                         </button>
-                        <button
-                            className={`tab-btn ${activeTab === 'instructor' ? 'active' : ''}`}
-                            onClick={() => setActiveTab('instructor')}
-                        >
-                            Instructor
-                        </button>
-                        <button
-                            className={`tab-btn ${activeTab === 'reviews' ? 'active' : ''}`}
-                            onClick={() => setActiveTab('reviews')}
-                        >
-                            Reviews
-                        </button>
                     </div>
 
                     {/* Curriculum Section */}
@@ -78,44 +112,37 @@ export default function CourseDetails() {
                         <div className="tab-content card animate-fade-up">
                             <h2 className="section-title">Course Content</h2>
                             <div className="curriculum-summary text-muted mb-4">
-                                15 sections • 142 lectures • 45h 22m total length
+                                {course.curriculum?.length || 0} sections • {totalLectures} lectures
                             </div>
 
                             <div className="accordion-list">
-                                <div className="accordion-item expanded card">
-                                    <div className="accordion-header">
-                                        <h3>Section 1: Introduction to Cloud Architecture</h3>
-                                        <span>5 lectures • 42min</span>
-                                    </div>
-                                    <div className="accordion-body">
-                                        <div className="lecture-row">
-                                            <div className="lecture-title"><Play size={16} className="text-primary" /> 1. Welcome to the Course</div>
-                                            <span className="lecture-time text-accent text-sm font-bold">Preview</span>
+                                {course.curriculum?.map((section, idx) => (
+                                    <div key={section.id} className="accordion-item expanded card mb-3">
+                                        <div className="accordion-header">
+                                            <h3>Section {idx + 1}: {section.title}</h3>
                                         </div>
-                                        <div className="lecture-row">
-                                            <div className="lecture-title"><Play size={16} className="text-muted" /> 2. Setting up your environment</div>
-                                            <span className="lecture-time">10:22</span>
-                                        </div>
-                                        <div className="lecture-row">
-                                            <div className="lecture-title"><Play size={16} className="text-muted" /> 3. AWS Architecture Overview</div>
-                                            <span className="lecture-time">15:45</span>
-                                        </div>
-                                    </div>
-                                </div>
+                                        <div className="accordion-body">
+                                            {(() => {
+                                                const items = [
+                                                    ...(section.lessons || []).map(l => ({...l, isQuiz: false})),
+                                                    ...(section.quizzes || []).map(q => ({...q, isQuiz: true}))
+                                                ].sort((a, b) => a.order_index - b.order_index);
 
-                                <div className="accordion-item card collapsed">
-                                    <div className="accordion-header">
-                                        <h3>Section 2: Building the Frontend Layer</h3>
-                                        <span>12 lectures • 3h 15min</span>
-                                    </div>
-                                </div>
+                                                if (items.length === 0) return <p className="text-muted italic text-sm">Empty section.</p>;
 
-                                <div className="accordion-item card collapsed">
-                                    <div className="accordion-header">
-                                        <h3>Section 3: Designing the API Server</h3>
-                                        <span>8 lectures • 2h 05min</span>
+                                                return items.map((item, iIdx) => (
+                                                    <div className="lecture-row" key={`${item.isQuiz ? 'q':'l'}-${item.id}`}>
+                                                        <div className="lecture-title flex items-center gap-2">
+                                                            {item.isQuiz ? <Play size={14} className="text-muted" /> : <Play size={14} className="text-primary" />} 
+                                                            {iIdx + 1}. {item.title}
+                                                        </div>
+                                                        <span className="lecture-time text-xs text-muted">{item.isQuiz ? 'Quiz' : 'Video'}</span>
+                                                    </div>
+                                                ));
+                                            })()}
+                                        </div>
                                     </div>
-                                </div>
+                                ))}
                             </div>
                         </div>
                     )}
@@ -123,18 +150,18 @@ export default function CourseDetails() {
                     {/* Overview Section */}
                     {activeTab === 'overview' && (
                         <div className="tab-content card animate-fade-up">
-                            <h2 className="section-title">What you'll learn</h2>
-                            <ul className="learning-outcomes mb-4">
-                                <li><Check size={20} className="text-accent" /> Build completely custom, full-stack applications</li>
-                                <li><Check size={20} className="text-accent" /> Deploy scalable systems on Amazon Web Services</li>
-                                <li><Check size={20} className="text-accent" /> Implement JWT User Authentication and Roles</li>
-                                <li><Check size={20} className="text-accent" /> Master modern UI design with responsive CSS</li>
-                            </ul>
+                            <h2 className="section-title">Description</h2>
+                            <p className="mb-6 whitespace-pre-line text-muted leading-relaxed">
+                                {course.description || "No description provided."}
+                            </p>
+                            
                             <h2 className="section-title mt-4">Requirements</h2>
                             <ul className="requirements-list">
-                                <li>Basic understanding of HTML, CSS, and JavaScript.</li>
-                                <li>A functional computer setup (Windows/Mac/Linux).</li>
-                                <li>No prior cloud experience required.</li>
+                                {course.requirements ? (
+                                    course.requirements.split('\n').filter(r => r.trim()).map((req, i) => <li key={i}>{req}</li>)
+                                ) : (
+                                    <li>Basic knowledge assumed.</li>
+                                )}
                             </ul>
                         </div>
                     )}
@@ -143,19 +170,29 @@ export default function CourseDetails() {
                 {/* Floating Sidebar */}
                 <div className="sidebar-column">
                     <div className="enrollment-card card floating-sidebar shrink-animation">
-                        <div className="cover-img-placeholder relative">
-                            <div className="play-overlay"><Play size={48} fill="white" /></div>
+                        <div className="cover-img-placeholder relative bg-gray-200" style={course.image_url ? { backgroundImage: `url(${course.image_url})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}>
+                            {!course.image_url && <div className="play-overlay"><Play size={48} fill="white" /></div>}
                         </div>
 
                         <div className="enrollment-body">
-                            <div className="price-tag text-primary">$99.00</div>
+                            <div className="price-tag text-primary">${Number(course.price).toFixed(2)}</div>
 
-                            <button
-                                className="btn btn-primary w-full enroll-btn pulse-glow-btn mb-3"
-                                onClick={handleEnroll}
-                            >
-                                Add to Cart
-                            </button>
+                            {user?.role === 'instructor' && user?.id === course.instructor_id ? (
+                                <button
+                                    className="btn btn-secondary w-full mb-3"
+                                    onClick={() => navigate(`/build/${course.id}`)}
+                                >
+                                    Edit Course
+                                </button>
+                            ) : (
+                                <button
+                                    className="btn btn-primary w-full enroll-btn pulse-glow-btn mb-3"
+                                    onClick={handleEnroll}
+                                    disabled={course.status !== 'Published'}
+                                >
+                                    {course.status === 'Published' ? 'Enroll Now' : 'Currently Unavailable'}
+                                </button>
+                            )}
 
                             <div className="interaction-buttons mb-4">
                                 <button
@@ -172,7 +209,7 @@ export default function CourseDetails() {
                                 <button
                                     className="btn btn-secondary flex-1 icon-btn"
                                     title="Share Course"
-                                    onClick={() => alert(`Link copied to clipboard: https://hexoria.app/course/1`)}
+                                    onClick={() => alert(`Link copied to clipboard`)}
                                 >
                                     <Share2 size={20} />
                                 </button>
@@ -180,8 +217,7 @@ export default function CourseDetails() {
 
                             <div className="course-includes text-muted">
                                 <h4 className="text-dark mb-2 font-bold">This course includes:</h4>
-                                <div className="include-item"><Play size={16} /> 45 hours on-demand video</div>
-                                <div className="include-item"><Check size={16} /> 15 Downloadable resources</div>
+                                <div className="include-item"><Check size={16} /> Self-paced curriculum</div>
                                 <div className="include-item"><Award size={16} /> Certificate of completion</div>
                             </div>
                         </div>

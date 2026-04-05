@@ -15,12 +15,17 @@ CREATE TABLE IF NOT EXISTS courses (
     category VARCHAR(50) NOT NULL,
     price DECIMAL(10, 2) NOT NULL,
     description TEXT,
+    level VARCHAR(50) DEFAULT 'Intermediate',
+    requirements TEXT,
+    target_audience TEXT,
     instructor_id INT REFERENCES users(id) ON DELETE CASCADE,
     image_url TEXT,
+    certificate_color VARCHAR(20) DEFAULT '#6C4CF1',
+    certificate_logo_url TEXT,
     hours INT DEFAULT 0,
     rating DECIMAL(3, 2) DEFAULT 0.00,
     students_enrolled INT DEFAULT 0,
-    status VARCHAR(20) DEFAULT 'Draft', -- Draft, Published
+    status VARCHAR(20) DEFAULT 'Draft',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -40,6 +45,21 @@ CREATE TABLE IF NOT EXISTS lessons (
     order_index INT NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS quizzes (
+    id SERIAL PRIMARY KEY,
+    section_id INT REFERENCES sections(id) ON DELETE CASCADE,
+    title VARCHAR(255) NOT NULL,
+    order_index INT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS quiz_questions (
+    id SERIAL PRIMARY KEY,
+    quiz_id INT REFERENCES quizzes(id) ON DELETE CASCADE,
+    question_text TEXT NOT NULL,
+    correct_answer TEXT NOT NULL,
+    options JSONB
+);
+
 CREATE TABLE IF NOT EXISTS enrollments (
     id SERIAL PRIMARY KEY,
     student_id INT REFERENCES users(id) ON DELETE CASCADE,
@@ -47,6 +67,15 @@ CREATE TABLE IF NOT EXISTS enrollments (
     progress_percentage INT DEFAULT 0,
     enrolled_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     UNIQUE(student_id, course_id)
+);
+
+CREATE TABLE IF NOT EXISTS lesson_progress (
+    id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(id) ON DELETE CASCADE,
+    lesson_id INT REFERENCES lessons(id) ON DELETE CASCADE,
+    completed BOOLEAN DEFAULT TRUE,
+    completed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(user_id, lesson_id)
 );
 
 CREATE TABLE IF NOT EXISTS cart_items (
@@ -57,5 +86,20 @@ CREATE TABLE IF NOT EXISTS cart_items (
     UNIQUE(user_id, course_id)
 );
 
--- Note: Because this is local simulation, the user can execute this script in pgAdmin 
--- or psql using `psql -U postgres -d hexoria -f database.sql`
+CREATE TABLE IF NOT EXISTS payments (
+    id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(id) ON DELETE CASCADE,
+    course_id INT REFERENCES courses(id) ON DELETE CASCADE,
+    amount DECIMAL(10, 2) NOT NULL,
+    transaction_id VARCHAR(100),
+    payment_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS certificates (
+    id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(id) ON DELETE CASCADE,
+    course_id INT REFERENCES courses(id) ON DELETE CASCADE,
+    certificate_code VARCHAR(100) UNIQUE NOT NULL,
+    issued_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(user_id, course_id)
+);
