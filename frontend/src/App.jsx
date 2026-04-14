@@ -20,6 +20,9 @@ import MyCourses from './pages/MyCourses';
 import Certificates from './pages/Certificates';
 import CertificateView from './pages/CertificateView';
 import QuizManager from './pages/QuizManager';
+import InstructorCourses from './pages/InstructorCourses';
+import { ToastProvider } from './context/ToastContext';
+import { ConfirmProvider } from './context/ConfirmContext';
 
 // Placeholder standard pages
 const PlaceholderPage = ({ title }) => (
@@ -64,7 +67,7 @@ function AppContent() {
           <Route path="/build" element={<CourseBuilder />} />
           <Route path="/build/:id" element={<CourseBuilder />} />
           <Route path="/quiz-manager/:courseId" element={<QuizManager />} />
-          <Route path="/instructor/courses" element={<PlaceholderPage title="Instructor: My Courses" />} />
+          <Route path="/instructor/courses" element={<InstructorCourses />} />
           <Route path="/instructor/students" element={<PlaceholderPage title="Instructor: Students" />} />
           <Route path="/instructor/earnings" element={<PlaceholderPage title="Instructor: Earnings" />} />
 
@@ -89,9 +92,13 @@ function AppContent() {
 function App() {
   return (
     <AuthProvider>
-      <Router>
-        <AppContent />
-      </Router>
+      <ToastProvider>
+        <ConfirmProvider>
+          <Router>
+            <AppContent />
+          </Router>
+        </ConfirmProvider>
+      </ToastProvider>
     </AuthProvider>
   );
 }

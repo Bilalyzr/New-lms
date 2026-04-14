@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Award, Download, Printer } from 'lucide-react';
+import { useToast } from '../context/ToastContext';
 import './Certificate.css';
 
 export default function CertificateView() {
     const { code } = useParams();
     const navigate = useNavigate();
+    const toast = useToast();
     const [certData, setCertData] = useState(null);
     const [loading, setLoading] = useState(true);
 
@@ -24,7 +26,7 @@ export default function CertificateView() {
                 if (found) {
                     setCertData(found);
                 } else {
-                    alert("Certificate not found or unauthorized");
+                    toast.error("Certificate not found or unauthorized");
                     navigate('/dashboard');
                 }
             } catch (err) {

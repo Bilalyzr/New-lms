@@ -96,7 +96,12 @@ router.get('/:courseId', auth, async (req, res) => {
         const enrollment = enrollCheck.rows[0];
 
         // Get Course Info
-        const courseRes = await pool.query("SELECT title, description, instructor_id FROM courses WHERE id = $1", [courseId]);
+        const courseRes = await pool.query("SELECT title, description, instructor_id FROM courses WHERE id = $1 AND status = 'Published'", [courseId]);
+        
+        if (courseRes.rows.length === 0) {
+            return res.status(404).json({ message: 'Course not found or is not currently available.' });
+        }
+
         const course = courseRes.rows[0];
 
         // Get Sections

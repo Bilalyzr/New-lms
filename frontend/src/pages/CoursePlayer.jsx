@@ -3,12 +3,14 @@ import { Play, CheckCircle, Circle, ChevronLeft, Menu, FileText, Download } from
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 import './CoursePlayer.css';
 
 export default function CoursePlayer() {
     const { id } = useParams(); // courseId
     const navigate = useNavigate();
     const { user } = useContext(AuthContext);
+    const toast = useToast();
     const token = user?.token;
 
     const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -42,7 +44,7 @@ export default function CoursePlayer() {
             } catch (err) {
                 console.error('Failed to fetch course data', err);
                 if (err.response?.status === 403) {
-                    alert('You must enroll in this course first!');
+                    toast.warning('You must enroll in this course first!');
                     navigate(`/course/${id}`);
                 }
             } finally {
@@ -114,7 +116,7 @@ export default function CoursePlayer() {
             navigate(`/certificate/${res.data.certificate_code}`);
         } catch (err) {
             console.error('Error getting certificate', err);
-            alert('Could not generate certificate.');
+            toast.error('Could not generate certificate.');
         } finally {
             setCertLoading(false);
         }

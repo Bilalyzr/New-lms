@@ -111,6 +111,10 @@ router.post('/', auth, async (req, res) => {
         if (!title) return res.status(400).json({ details: 'Course title is required' });
         if (!category) return res.status(400).json({ details: 'Course category is required' });
 
+        // Validate status - instructors can only set Draft or Pending (submit for review)
+        const allowedStatuses = ['Draft', 'Pending'];
+        const validStatus = allowedStatuses.includes(status) ? status : 'Draft';
+
         let validPrice = 0.00;
         if (price !== undefined && price !== null && price !== '') {
             validPrice = parseFloat(price);
@@ -121,7 +125,7 @@ router.post('/', auth, async (req, res) => {
 
         const newCourse = await client.query(
             'INSERT INTO courses (title, category, price, description, instructor_id, status, image_url) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
-            [title, category, validPrice, description || '', req.user.id, status || 'Draft', image_url || '']
+            [title, category, validPrice, description || '', req.user.id, validStatus, image_url || '']
         );
         
         const courseId = newCourse.rows[0].id;
@@ -144,10 +148,20 @@ router.post('/', auth, async (req, res) => {
                                 [sectionId, item.title || `Lesson ${lIndex + 1}`, item.link || '', lIndex]
                             );
                         } else if (item.type === 'quiz') {
-                            await client.query(
-                                'INSERT INTO quizzes (section_id, title, order_index) VALUES ($1, $2, $3)',
+                            const quizInsert = await client.query(
+                                'INSERT INTO quizzes (section_id, title, order_index) VALUES ($1, $2, $3) RETURNING id',
                                 [sectionId, item.title || `Quiz ${lIndex + 1}`, lIndex]
                             );
+                            const quizId = quizInsert.rows[0].id;
+
+                            if (item.quizQuestions && Array.isArray(item.quizQuestions)) {
+                                for (let q of item.quizQuestions) {
+                                    await client.query(
+                                        'INSERT INTO quiz_questions (quiz_id, question_text, correct_answer, options) VALUES ($1, $2, $3, $4)',
+                                        [quizId, q.question || q.question_text, q.correct?.toString() || q.correct_answer || '0', JSON.stringify(q.options || [])]
+                                    );
+                                }
+                            }
                         }
                     }
                 }
@@ -254,6 +268,25 @@ router.put('/:id', auth, async (req, res) => {
             [title, category, validPrice, description, status, image_url, level, requirements, target_audience, certificate_color, certificate_logo_url, req.params.id]
         );
         res.json(updatedCourse.rows[0]);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+});
+
+// @route   DELETE api/courses/:id
+// @desc    Delete a course (instructor can only delete their own)
+// @access  Private (Instructor only)
+router.delete('/:id', auth, async (req, res) => {
+    if (req.user.role !== 'instructor') return res.status(403).json({ message: 'Access Denied: Instructors Only' });
+    try {
+        const courseCheck = await pool.query('SELECT * FROM courses WHERE id = $1', [req.params.id]);
+        if (courseCheck.rows.length === 0) return res.status(404).json({ message: 'Course not found' });
+        if (courseCheck.rows[0].instructor_id !== req.user.id) return res.status(401).json({ message: 'Unauthorized' });
+
+        // CASCADE will delete sections, lessons, quizzes, enrollments etc.
+        await pool.query('DELETE FROM courses WHERE id = $1', [req.params.id]);
+        res.json({ message: 'Course deleted successfully' });
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server Error');

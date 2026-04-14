@@ -3,6 +3,7 @@ import { Play, Check, Heart, Share2, Star, Clock, Globe, Award, AlertCircle } fr
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 import './CourseDetails.css';
 
 export default function CourseDetails() {
@@ -13,6 +14,7 @@ export default function CourseDetails() {
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
     const { user } = useContext(AuthContext);
+    const toast = useToast();
 
     useEffect(() => {
         const fetchCourse = async () => {
@@ -38,13 +40,13 @@ export default function CourseDetails() {
             await axios.post(`http://localhost:5000/api/learn/${id}/enroll`, {}, {
                 headers: { 'x-auth-token': user.token }
             });
-            alert("Enrollment successful!");
+            toast.success("Enrollment successful! Redirecting to course...");
             navigate(`/learn/${id}`);
         } catch (err) {
             if (err.response?.data?.message === 'Already enrolled in this course') {
                 navigate(`/learn/${id}`);
             } else {
-                alert(err.response?.data?.message || 'Error enrolling');
+                toast.error(err.response?.data?.message || 'Error enrolling in course');
             }
         }
     };
@@ -209,7 +211,7 @@ export default function CourseDetails() {
                                 <button
                                     className="btn btn-secondary flex-1 icon-btn"
                                     title="Share Course"
-                                    onClick={() => alert(`Link copied to clipboard`)}
+                                    onClick={() => { navigator.clipboard.writeText(window.location.href); toast.info('Link copied to clipboard!'); }}
                                 >
                                     <Share2 size={20} />
                                 </button>

@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { User, Lock, CreditCard, Bell, Save, Check } from 'lucide-react';
+import { useToast } from '../context/ToastContext';
 import './Settings.css';
 
 export default function Settings() {
     const [activeTab, setActiveTab] = useState('profile');
+    const toast = useToast();
     const [showToast, setShowToast] = useState(false);
 
     const handleSave = (e) => {
@@ -125,7 +127,7 @@ export default function Settings() {
                         <div>
                             <h2 className="section-title mb-4">Payouts (Instructor Mode)</h2>
                             <p className="text-muted">Connect your Stripe account to receive automated payouts successfully.</p>
-                            <button className="btn btn-primary mt-4" onClick={(e) => { e.preventDefault(); alert('Redirecting to Stripe OAuth secure flow...'); }}>Connect Stripe Account</button>
+                            <button className="btn btn-primary mt-4" onClick={(e) => { e.preventDefault(); toast.info('Redirecting to Stripe OAuth secure flow...'); }}>Connect Stripe Account</button>
                         </div>
                     )}
                 </main>

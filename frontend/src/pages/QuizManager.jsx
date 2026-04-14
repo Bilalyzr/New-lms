@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 import { FileText, Save, Plus, Trash2 } from 'lucide-react';
 import './Dashboard.css';
 
@@ -9,7 +10,8 @@ export default function QuizManager() {
     const { courseId } = useParams();
     const navigate = useNavigate();
     const { user } = useContext(AuthContext);
-    
+    const toast = useToast();
+
     const [sections, setSections] = useState([]);
     const [loading, setLoading] = useState(true);
     
@@ -73,7 +75,7 @@ export default function QuizManager() {
             // Validation
             for (let q of questions) {
                 if (!q.question_text || !q.correct_answer || q.options.some(opt => !opt)) {
-                    alert("Please fill in all fields for all questions.");
+                    toast.warning("Please fill in all fields for all questions.");
                     return;
                 }
             }
@@ -81,10 +83,10 @@ export default function QuizManager() {
             await axios.post(`http://localhost:5000/api/courses/quiz/${selectedQuiz.id}/questions`, { questions }, {
                 headers: { 'x-auth-token': user?.token }
             });
-            alert("Quiz saved successfully!");
+            toast.success("Quiz saved successfully!");
         } catch (err) {
             console.error("Error saving quiz", err);
-            alert("Failed to save quiz");
+            toast.error("Failed to save quiz");
         }
     };
 

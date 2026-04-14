@@ -27,6 +27,8 @@ export default function MyCourses() {
 
         if (user?.token) {
             fetchMyCourses();
+        } else {
+            setLoading(false);
         }
     }, [user]);
 

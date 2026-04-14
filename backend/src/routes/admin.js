@@ -11,6 +11,31 @@ const isAdmin = (req, res, next) => {
     next();
 };
 
+// @route   GET api/admin/stats
+// @desc    Get platform-wide statistics
+// @access  Private (Admin only)
+router.get('/stats', auth, isAdmin, async (req, res) => {
+    try {
+        const [usersRes, coursesRes, enrollmentsRes, publishedRes, pendingRes] = await Promise.all([
+            pool.query('SELECT count(*) as total FROM users'),
+            pool.query('SELECT count(*) as total FROM courses'),
+            pool.query('SELECT count(*) as total FROM enrollments'),
+            pool.query("SELECT count(*) as total FROM courses WHERE status = 'Published'"),
+            pool.query("SELECT count(*) as total FROM courses WHERE status = 'Pending'")
+        ]);
+        res.json({
+            totalUsers: parseInt(usersRes.rows[0].total),
+            totalCourses: parseInt(coursesRes.rows[0].total),
+            totalEnrollments: parseInt(enrollmentsRes.rows[0].total),
+            publishedCourses: parseInt(publishedRes.rows[0].total),
+            pendingCourses: parseInt(pendingRes.rows[0].total)
+        });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+});
+
 // @route   GET api/admin/courses/pending
 // @desc    Get all pending courses for approval
 // @access  Private (Admin only)

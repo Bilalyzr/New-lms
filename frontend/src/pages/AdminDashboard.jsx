@@ -1,32 +1,43 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Users, Server, AlertCircle, Database, Check, X } from 'lucide-react';
+import { Users, BookOpen, AlertCircle, Database, Check, X, Clock, TrendingUp } from 'lucide-react';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
+import { useConfirm } from '../context/ConfirmContext';
 import './Dashboard.css';
 
 export default function AdminDashboard() {
     const { user } = useContext(AuthContext);
     const [pendingCourses, setPendingCourses] = useState([]);
+    const [stats, setStats] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const toast = useToast();
+    const confirm = useConfirm();
 
     useEffect(() => {
         if (user?.token) {
-            fetchPendingCourses();
+            fetchData();
         }
     }, [user]);
 
-    const fetchPendingCourses = async () => {
+    const fetchData = async () => {
         setLoading(true);
         setError(null);
         try {
-            const res = await axios.get('http://localhost:5000/api/admin/courses/pending', {
-                headers: { 'x-auth-token': user?.token }
-            });
-            setPendingCourses(res.data);
+            const [pendingRes, statsRes] = await Promise.all([
+                axios.get('http://localhost:5000/api/admin/courses/pending', {
+                    headers: { 'x-auth-token': user?.token }
+                }),
+                axios.get('http://localhost:5000/api/admin/stats', {
+                    headers: { 'x-auth-token': user?.token }
+                })
+            ]);
+            setPendingCourses(pendingRes.data);
+            setStats(statsRes.data);
         } catch (err) {
-            console.error('Error fetching pending courses:', err);
-            setError(err.response?.data?.message || 'Failed to load pending courses. Make sure you are logged in as admin.');
+            console.error('Error fetching admin data:', err);
+            setError(err.response?.data?.message || 'Failed to load admin data. Make sure you are logged in as admin.');
         } finally {
             setLoading(false);
         }
@@ -37,77 +48,90 @@ export default function AdminDashboard() {
             await axios.put(`http://localhost:5000/api/admin/courses/${courseId}/approve`, {}, {
                 headers: { 'x-auth-token': user?.token }
             });
-            alert(`Course "${courseTitle}" approved successfully!`);
-            fetchPendingCourses(); // Refresh list
+            toast.success(`Course "${courseTitle}" approved and published!`);
+            fetchData();
         } catch (err) {
             console.error('Error approving course:', err);
-            alert('Failed to approve course');
+            toast.error('Failed to approve course');
         }
     };
 
     const handleReject = async (courseId, courseTitle) => {
+        const confirmed = await confirm({
+            title: 'Reject Course',
+            message: `Reject "${courseTitle}"? It will be sent back to the instructor as a draft for revision.`,
+            confirmText: 'Reject',
+            type: 'warning'
+        });
+        if (!confirmed) return;
         try {
             await axios.put(`http://localhost:5000/api/admin/courses/${courseId}/reject`, {}, {
                 headers: { 'x-auth-token': user?.token }
             });
-            alert(`Course "${courseTitle}" rejected.`);
-            fetchPendingCourses(); // Refresh list
+            toast.warning(`Course "${courseTitle}" rejected and sent back as draft.`);
+            fetchData();
         } catch (err) {
             console.error('Error rejecting course:', err);
-            alert('Failed to reject course');
+            toast.error('Failed to reject course');
         }
-    };
-
-    const handleAction = (e, message) => {
-        e.preventDefault();
-        alert(message);
     };
 
     return (
         <div className="dashboard-page container animate-fade-up">
             <header className="dashboard-header mb-6">
                 <h1 className="dashboard-title">Platform Administration</h1>
-                <p className="text-muted">Manage global users, verify transactions, and view platform health.</p>
+                <p className="text-muted">Manage courses, users, and platform health.</p>
             </header>
 
-            {/* PRD 148: Admin Dashboard Purple gradient cards */}
+            {/* Stats Cards */}
             <div className="stats-grid mb-8">
                 <div className="stat-card card admin-purple-card">
                     <Users className="stat-icon" size={32} color="white" />
                     <div className="stat-info">
-                        <span className="stat-value count-up text-white" style={{ color: 'white' }}>12,504</span>
-                        <span className="stat-label text-white" style={{ color: 'rgba(255,255,255,0.8)' }}>Platform Users</span>
+                        <span className="stat-value count-up" style={{ color: 'white' }}>
+                            {loading ? '-' : stats?.totalUsers || 0}
+                        </span>
+                        <span className="stat-label" style={{ color: 'rgba(255,255,255,0.8)' }}>Platform Users</span>
                     </div>
                 </div>
                 <div className="stat-card card admin-purple-card">
-                    <Server className="stat-icon" size={32} color="white" />
+                    <BookOpen className="stat-icon" size={32} color="white" />
                     <div className="stat-info">
-                        <span className="stat-value count-up text-white" style={{ color: 'white' }}>99.9%</span>
-                        <span className="stat-label" style={{ color: 'rgba(255,255,255,0.8)' }}>System Uptime</span>
+                        <span className="stat-value count-up" style={{ color: 'white' }}>
+                            {loading ? '-' : stats?.publishedCourses || 0}
+                        </span>
+                        <span className="stat-label" style={{ color: 'rgba(255,255,255,0.8)' }}>Published Courses</span>
                     </div>
                 </div>
                 <div className="stat-card card admin-purple-card">
-                    <Database className="stat-icon" size={32} color="white" />
+                    <TrendingUp className="stat-icon" size={32} color="white" />
                     <div className="stat-info">
-                        <span className="stat-value count-up text-white" style={{ color: 'white' }}>AWS RDS</span>
-                        <span className="stat-label" style={{ color: 'rgba(255,255,255,0.8)' }}>Storage Health</span>
+                        <span className="stat-value count-up" style={{ color: 'white' }}>
+                            {loading ? '-' : stats?.totalEnrollments || 0}
+                        </span>
+                        <span className="stat-label" style={{ color: 'rgba(255,255,255,0.8)' }}>Total Enrollments</span>
                     </div>
                 </div>
             </div>
 
             <div className="grid-2-col">
-                {/* User Management Module */}
+                {/* Course Approvals */}
                 <section className="card p-5 shrink-0">
-                    <h2 className="section-title text-xl mb-4 text-dark">Course Approvals ({pendingCourses.length})</h2>
-                    
+                    <h2 className="section-title text-xl mb-4 text-dark">
+                        Course Approvals
+                        {!loading && pendingCourses.length > 0 && (
+                            <span className="badge badge-amber" style={{marginLeft: '8px', fontSize: '12px'}}>{pendingCourses.length} pending</span>
+                        )}
+                    </h2>
+
                     {loading ? (
                         <p className="text-muted">Loading pending courses...</p>
                     ) : error ? (
-                        <div className="p-4 bg-red-50 border border-red-200 rounded text-red-700 text-sm">
+                        <div className="p-4 bg-light border-radius text-sm" style={{color: '#DC2626'}}>
                             <strong>Error:</strong> {error}
                         </div>
                     ) : pendingCourses.length === 0 ? (
-                        <p className="text-muted p-4 text-center bg-light border-radius">No courses pending approval. ✅</p>
+                        <p className="text-muted p-4 text-center bg-light border-radius">No courses pending approval. All clear!</p>
                     ) : (
                         pendingCourses.map(course => (
                             <div key={course.id} className="flagged-item mb-3 p-3 bg-light border-radius">
@@ -116,20 +140,25 @@ export default function AdminDashboard() {
                                         <AlertCircle className="text-accent mt-1" size={18} />
                                         <div>
                                             <h4 className="font-bold text-sm">{course.title}</h4>
-                                            <p className="text-xs text-muted">By {course.instructor || 'Unknown Instructor'} • {course.category}</p>
-                                            <p className="text-xs text-muted">Status: <span className="font-semibold text-accent">{course.status}</span></p>
+                                            <p className="text-xs text-muted">
+                                                By {course.instructor || 'Unknown Instructor'} &bull; {course.category}
+                                                {course.price > 0 && ` • $${Number(course.price).toFixed(2)}`}
+                                            </p>
+                                            <p className="text-xs text-muted">
+                                                Submitted: {new Date(course.created_at).toLocaleDateString()}
+                                            </p>
                                         </div>
                                     </div>
                                     <div className="flex gap-2">
-                                        <button 
-                                            className="btn-secondary btn-sm text-red hover-red-bg border-red flex items-center justify-center p-2" 
+                                        <button
+                                            className="btn-secondary btn-sm text-red hover-red-bg border-red flex items-center justify-center p-2"
                                             onClick={() => handleReject(course.id, course.title)}
                                             title="Reject Course"
                                         >
                                             <X size={16} />
                                         </button>
-                                        <button 
-                                            className="btn btn-primary btn-sm flex items-center justify-center p-2" 
+                                        <button
+                                            className="btn btn-primary btn-sm flex items-center justify-center p-2"
                                             onClick={() => handleApprove(course.id, course.title)}
                                             title="Approve Course"
                                         >
@@ -142,19 +171,33 @@ export default function AdminDashboard() {
                     )}
                 </section>
 
-                {/* Global Configuration Module */}
+                {/* Platform Overview */}
                 <section className="card p-5 shrink-0">
-                    <h2 className="section-title text-xl mb-4 text-dark">Quick Configs</h2>
-                    <form onSubmit={(e) => handleAction(e, 'Global System Settings successfully updated and deployed to production!')}>
-                        <div className="form-group">
-                            <label className="text-sm font-bold text-muted mb-2 block">Platform Commission Rate (%)</label>
-                            <input type="number" defaultValue={20} className="form-control" />
+                    <h2 className="section-title text-xl mb-4 text-dark">Platform Overview</h2>
+                    <div className="flex flex-col gap-3">
+                        <div className="flex justify-between items-center p-3 bg-light border-radius">
+                            <span className="text-sm font-bold">Total Courses</span>
+                            <span className="text-sm">{loading ? '-' : stats?.totalCourses || 0}</span>
                         </div>
-                        <button type="submit" className="btn btn-primary mt-3 w-full">Update Global Settings</button>
-                    </form>
+                        <div className="flex justify-between items-center p-3 bg-light border-radius">
+                            <span className="text-sm font-bold">Published</span>
+                            <span className="text-sm badge badge-purple">{loading ? '-' : stats?.publishedCourses || 0}</span>
+                        </div>
+                        <div className="flex justify-between items-center p-3 bg-light border-radius">
+                            <span className="text-sm font-bold">Pending Approval</span>
+                            <span className="text-sm badge badge-amber">{loading ? '-' : stats?.pendingCourses || 0}</span>
+                        </div>
+                        <div className="flex justify-between items-center p-3 bg-light border-radius">
+                            <span className="text-sm font-bold">Total Users</span>
+                            <span className="text-sm">{loading ? '-' : stats?.totalUsers || 0}</span>
+                        </div>
+                        <div className="flex justify-between items-center p-3 bg-light border-radius">
+                            <span className="text-sm font-bold">Total Enrollments</span>
+                            <span className="text-sm">{loading ? '-' : stats?.totalEnrollments || 0}</span>
+                        </div>
+                    </div>
                 </section>
             </div>
-
         </div>
     );
 }
